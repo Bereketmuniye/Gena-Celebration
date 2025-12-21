@@ -102,7 +102,7 @@ const App: React.FC = () => {
 
         <div className="flex items-center space-x-4">
           <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse"></div>
-          <span className="text-[10px] text-stone-500 uppercase tracking-widest font-bold">AI Active</span>
+          <span className="text-[10px] text-stone-500 uppercase tracking-widest font-bold">BEK DEV</span>
         </div>
       </nav>
 
