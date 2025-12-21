@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import CultureChat from './components/CultureChat';
 import Visualizer from './components/Visualizer';
 import RecipeHub from './components/RecipeHub';
@@ -9,6 +9,12 @@ import { Tab } from './types';
 
 const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<Tab>(Tab.CHAT);
+
+  useEffect(() => {
+    if (!process.env.API_KEY) {
+      console.warn("Gemini API Key is missing. Please set GEMINI_API_KEY in your environment variables.");
+    }
+  }, []);
 
   const renderContent = () => {
     switch (activeTab) {
@@ -23,7 +29,7 @@ const App: React.FC = () => {
           </div>
           <h2 className="text-3xl font-serif text-amber-400">The Buna Ceremony</h2>
           <p className="max-w-xl text-stone-400 leading-relaxed">
-            The Ethiopian coffee ceremony is more than a drink; it is a ritual of peace, social grace, and hospitality. 
+            The Ethiopian coffee ceremony is more than a drink; it is a ritual of peace, social grace, and hospitality.
             It involves roasting the beans, the fragrant smoke of incense, and three rounds of serving: Abol, Tona, and Baraka.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-2xl mt-8">
@@ -31,16 +37,16 @@ const App: React.FC = () => {
               <h4 className="text-amber-500 font-bold mb-2">Abol</h4>
               <p className="text-xs text-stone-500 italic">The First Round - Strength</p>
             </div>
-             <div className="p-4 bg-stone-900/50 rounded-xl border border-stone-800">
+            <div className="p-4 bg-stone-900/50 rounded-xl border border-stone-800">
               <h4 className="text-amber-500 font-bold mb-2">Tona</h4>
               <p className="text-xs text-stone-500 italic">The Second Round - Transformation</p>
             </div>
-             <div className="p-4 bg-stone-900/50 rounded-xl border border-stone-800">
+            <div className="p-4 bg-stone-900/50 rounded-xl border border-stone-800">
               <h4 className="text-amber-500 font-bold mb-2">Baraka</h4>
               <p className="text-xs text-stone-500 italic">The Third Round - Blessing</p>
             </div>
           </div>
-          <button 
+          <button
             onClick={() => setActiveTab(Tab.CHAT)}
             className="mt-8 text-amber-500 hover:text-amber-400 flex items-center space-x-2 transition-colors"
           >
@@ -55,8 +61,8 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col selection:bg-amber-500/30">
-      <FestiveOverlay />
-      
+      <FestiveOverlay activeTab={activeTab} />
+
       {/* Background decoration */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden opacity-20">
         <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] ethiopian-gradient blur-[120px] rounded-full"></div>
@@ -86,9 +92,8 @@ const App: React.FC = () => {
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id as Tab)}
-              className={`text-xs uppercase tracking-widest font-bold transition-all ${
-                activeTab === item.id ? 'text-amber-400 border-b-2 border-amber-500' : 'text-stone-500 hover:text-stone-300'
-              }`}
+              className={`text-xs uppercase tracking-widest font-bold transition-all ${activeTab === item.id ? 'text-amber-400 border-b-2 border-amber-500' : 'text-stone-500 hover:text-stone-300'
+                }`}
             >
               {item.label}
             </button>
@@ -96,8 +101,8 @@ const App: React.FC = () => {
         </div>
 
         <div className="flex items-center space-x-4">
-           <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse"></div>
-           <span className="text-[10px] text-stone-500 uppercase tracking-widest font-bold">AI Active</span>
+          <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse"></div>
+          <span className="text-[10px] text-stone-500 uppercase tracking-widest font-bold">AI Active</span>
         </div>
       </nav>
 
@@ -118,9 +123,8 @@ const App: React.FC = () => {
           <button
             key={item.id}
             onClick={() => setActiveTab(item.id as Tab)}
-            className={`text-xl p-2 rounded-lg transition-all ${
-              activeTab === item.id ? 'bg-amber-500/20 scale-110' : 'opacity-50'
-            }`}
+            className={`text-xl p-2 rounded-lg transition-all ${activeTab === item.id ? 'bg-amber-500/20 scale-110' : 'opacity-50'
+              }`}
           >
             {item.icon}
           </button>
