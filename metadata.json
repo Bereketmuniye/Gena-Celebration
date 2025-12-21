@@ -1,0 +1,8 @@
+{
+  "name": "Habesha Charisma - An Ethiopian Odyssey",
+  "description": "A high-end, immersive platform exploring the soul of Ethiopia through AI-powered cultural conversations, stunning visual generation, and culinary explorations.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
