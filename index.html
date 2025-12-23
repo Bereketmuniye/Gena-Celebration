@@ -6,19 +6,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Habesha Charisma</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;600&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
         rel="stylesheet">
     <style>
+        :root {
+            --ethiopian-green: #006400;
+            --ethiopian-gold: #FFD700;
+            --ethiopian-red: #8B0000;
+        }
+
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Outfit', sans-serif;
             background-color: #fdfcf7;
             background-image:
-                radial-gradient(circle at 0% 0%, rgba(7, 137, 48, 0.12) 0%, transparent 40%),
-                radial-gradient(circle at 100% 0%, rgba(218, 18, 26, 0.12) 0%, transparent 40%),
-                radial-gradient(circle at 50% 50%, rgba(252, 221, 9, 0.1) 0%, transparent 60%),
-                radial-gradient(circle at 0% 100%, rgba(245, 158, 11, 0.1) 0%, transparent 40%),
-                radial-gradient(circle at 100% 100%, rgba(16, 185, 129, 0.1) 0%, transparent 40%);
+                radial-gradient(circle at 0% 0%, rgba(0, 100, 0, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 100% 0%, rgba(139, 0, 0, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, rgba(255, 215, 0, 0.05) 0%, transparent 60%),
+                url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Ffilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            background-blend-mode: overlay;
             color: #1c1917;
             margin: 0;
             overflow-x: hidden;
@@ -31,18 +39,67 @@
         .font-serif {
             font-family: 'Playfair Display', serif;
             color: #0c0a09;
-            font-weight: 700;
-        }
-
-        .ethiopian-gradient {
-            background: linear-gradient(135deg, #056b25 0%, #d4b906 50%, #b30e15 100%);
         }
 
         .glass-card {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(120, 113, 108, 0.25);
-            box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.05);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+
+        .ethiopian-gradient-text {
+            background: linear-gradient(to right, var(--ethiopian-green), var(--ethiopian-gold), var(--ethiopian-red));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0px) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-20px) rotate(2deg);
+            }
+
+            100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+        }
+
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .shine-effect {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .shine-effect::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transform: rotate(45deg);
+            transition: 0.5s;
+        }
+
+        .shine-effect:hover::after {
+            left: 100%;
         }
 
         ::-webkit-scrollbar {
@@ -50,18 +107,19 @@
         }
 
         ::-webkit-scrollbar-track {
-            background: #1c1917;
+            background: #fdfcf7;
         }
 
         ::-webkit-scrollbar-thumb {
-            background: #44403c;
-            border-radius: 4px;
+            background: #e7e5e4;
+            border-radius: 10px;
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            background: #57534e;
+            background: #d6d3d1;
         }
     </style>
+</head>
 
 <body>
     <div id="root"></div>

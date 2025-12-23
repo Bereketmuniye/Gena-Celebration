@@ -17,9 +17,11 @@ export interface Recipe {
 }
 
 export enum Tab {
+  HOME = 'home',
   CHAT = 'chat',
   VISUALS = 'visuals',
   GASTRONOMY = 'gastronomy',
   COFFEE = 'coffee',
-  GENNA = 'genna'
+  GENNA = 'genna',
+  GIFT = 'gift'
 }

@@ -61,45 +61,26 @@ const BackgroundMusic: React.FC = () => {
     };
 
     return (
-        <div className="fixed bottom-24 left-6 z-[10001] md:bottom-8 md:left-8">
+        <div className="fixed bottom-8 left-8 z-[100]">
             <div id="youtube-player" className="hidden"></div>
             <button
                 onClick={togglePlay}
                 disabled={!isReady}
-                className={`glass-card p-4 rounded-full shadow-2xl hover:scale-110 transition-all border-amber-500/50 group flex items-center justify-center ${!isReady ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
-                title={isPlaying ? "Pause Background Music" : "Play Background Music"}
+                className="group flex items-center space-x-3 bg-white/10 backdrop-blur-2xl border border-white/20 p-3 rounded-2xl shadow-2xl hover:bg-white/20 transition-all duration-500 disabled:opacity-50"
             >
-                <div className="relative flex items-center justify-center">
+                <div className="w-10 h-10 bg-stone-950 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
                     {isPlaying ? (
-                        <svg className="w-6 h-6 text-amber-500" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
-                        </svg>
+                        <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg>
                     ) : (
-                        <svg className="w-6 h-6 text-amber-500" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M8 5v14l11-7z" />
-                        </svg>
-                    )}
-
-                    {isPlaying && (
-                        <div className="absolute -top-4 left-1/2 -translate-x-1/2 flex items-end space-x-1 h-3">
-                            <div className="w-0.5 bg-amber-500 animate-[music-bar_0.6s_ease-in-out_infinite]" style={{ height: '60%' }}></div>
-                            <div className="w-0.5 bg-amber-500 animate-[music-bar_0.8s_ease-in-out_infinite]" style={{ height: '100%' }}></div>
-                            <div className="w-0.5 bg-amber-500 animate-[music-bar_0.7s_ease-in-out_infinite]" style={{ height: '80%' }}></div>
-                        </div>
+                        <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
                     )}
                 </div>
-
-                <span className="max-w-0 overflow-hidden group-hover:max-w-xs group-hover:ml-3 transition-all duration-500 text-[10px] uppercase tracking-widest font-bold text-amber-500 whitespace-nowrap">
-                    {isPlaying ? "Now Playing: Genna Music" : "Play Festive Music"}
-                </span>
+                <div className="pr-4 overflow-hidden max-w-0 group-hover:max-w-xs transition-all duration-700 ease-in-out">
+                    <span className="text-[10px] uppercase tracking-[0.3em] font-bold text-stone-900 whitespace-nowrap">
+                        {isPlaying ? 'Atmosphere: ON' : 'Atmosphere: OFF'}
+                    </span>
+                </div>
             </button>
-
-            <style>{`
-        @keyframes music-bar {
-          0%, 100% { height: 30%; }
-          50% { height: 100%; }
-        }
-      `}</style>
         </div>
     );
 };

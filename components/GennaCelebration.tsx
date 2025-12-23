@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { getAI } from '../services/gemini';
+import CelebrationHighlight from './CelebrationHighlight';
 
 const GennaCelebration: React.FC = () => {
   const [blessing, setBlessing] = useState<string | null>(null);

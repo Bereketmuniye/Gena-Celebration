@@ -38,6 +38,11 @@ const FestiveOverlay: React.FC<FestiveOverlayProps> = ({ activeTab }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const particles = useRef<Particle[]>([]);
   const messageAlphaRef = useRef(0);
+  const activeTabRef = useRef(activeTab);
+
+  useEffect(() => {
+    activeTabRef.current = activeTab;
+  }, [activeTab]);
 
   const drawFlower = (ctx: CanvasRenderingContext2D, radius: number) => {
     ctx.save();
@@ -87,22 +92,22 @@ const FestiveOverlay: React.FC<FestiveOverlayProps> = ({ activeTab }) => {
 
       let type: Particle['type'] = 'flower';
       let color = COLORS.gold;
-      let radius = Math.random() * 6 + 4;
+      let radius = Math.random() * 12 + 8; // Increased size
       let life = 0.002 + Math.random() * 0.007;
 
       if (rand > 0.7) {
         type = 'grass';
         color = COLORS.ketema;
-        radius = Math.random() * 12 + 6;
+        radius = Math.random() * 20 + 10; // Increased size
       } else if (rand < 0.1) {
         type = 'star';
         color = '#FFFFFF';
-        radius = Math.random() * 3 + 2;
+        radius = Math.random() * 6 + 4; // Increased size
         life = 0.01 + Math.random() * 0.01;
       } else if (rand < 0.2) {
         type = 'pollen';
         color = COLORS.glow;
-        radius = Math.random() * 2 + 1;
+        radius = Math.random() * 4 + 2; // Increased size
         life = 0.01 + Math.random() * 0.02;
       } else {
         // Randomize flower colors from the festive palette
@@ -239,6 +244,7 @@ const FestiveOverlay: React.FC<FestiveOverlayProps> = ({ activeTab }) => {
     };
 
     const handleWindowClick = (e: MouseEvent) => {
+      if (activeTabRef.current === Tab.GIFT) return;
       spawnFlowerGalaxy(e.clientX, e.clientY, 60, false);
     };
 
@@ -248,18 +254,32 @@ const FestiveOverlay: React.FC<FestiveOverlayProps> = ({ activeTab }) => {
     animate();
 
     const initialCelebration = () => {
-      // Multiple waves of "Melkam Genna" rain
+      // Spawn from all 4 corners
+      const corners = [
+        { x: 0, y: 0 },
+        { x: window.innerWidth, y: 0 },
+        { x: 0, y: window.innerHeight },
+        { x: window.innerWidth, y: window.innerHeight }
+      ];
+
+      corners.forEach((corner, i) => {
+        setTimeout(() => {
+          spawnFlowerGalaxy(corner.x, corner.y, 120, false);
+        }, i * 300);
+      });
+
+      // Multiple waves of "Melkam Genna" rain from top
       for (let i = 0; i < 6; i++) {
         setTimeout(() => {
           const x = Math.random() * window.innerWidth;
           const y = -30;
           spawnFlowerGalaxy(x, y, 70, false);
-        }, i * 400);
+        }, (i + 4) * 400);
       }
 
       // Central "Melkam Genna" blast with voice
       setTimeout(() => {
-        spawnFlowerGalaxy(window.innerWidth / 2, window.innerHeight / 2.5, 350, false);
+        spawnFlowerGalaxy(window.innerWidth / 2, window.innerHeight / 2.5, 400, false);
       }, 1500);
     };
 
