@@ -218,12 +218,12 @@ const App: React.FC = () => {
       </div>
 
       {/* Main Content */}
-      <main className="relative z-40 flex-1 pt-32 pb-24 px-4 md:px-8 max-w-7xl mx-auto w-full">
+      <main className="relative z-40 flex-1 pt-24 md:pt-32 pb-32 md:pb-24 px-4 md:px-8 max-w-7xl mx-auto w-full">
         {renderContent()}
       </main>
 
       {/* Mobile Navigation */}
-      <div className="md:hidden fixed bottom-8 left-1/2 -translate-x-1/2 z-50 glass-card px-6 py-4 rounded-full flex space-x-6 shadow-2xl border border-white/50">
+      <div className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50 glass-card px-4 py-3 rounded-full flex space-x-4 shadow-2xl border border-white/50 max-w-[95vw] overflow-x-auto no-scrollbar">
         {[
           { id: Tab.HOME, icon: '🏠' },
           { id: Tab.CHAT, icon: '📜' },
@@ -236,7 +236,7 @@ const App: React.FC = () => {
           <button
             key={item.id}
             onClick={() => setActiveTab(item.id as Tab)}
-            className={`text-2xl transition-all duration-300 ${activeTab === item.id ? 'scale-125 drop-shadow-lg' : 'opacity-40 grayscale'
+            className={`text-xl transition-all duration-300 flex-shrink-0 ${activeTab === item.id ? 'scale-125 drop-shadow-lg' : 'opacity-40 grayscale'
               }`}
           >
             {item.icon}

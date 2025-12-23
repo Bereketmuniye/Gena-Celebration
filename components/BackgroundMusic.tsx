@@ -61,7 +61,7 @@ const BackgroundMusic: React.FC = () => {
     };
 
     return (
-        <div className="fixed bottom-8 left-8 z-[100]">
+        <div className="fixed bottom-8 left-8 md:bottom-8 md:left-8 z-[100] max-md:top-24 max-md:bottom-auto max-md:right-4 max-md:left-auto">
             <div id="youtube-player" className="hidden"></div>
             <button
                 onClick={togglePlay}
