@@ -5,6 +5,7 @@ import Visualizer from './components/Visualizer';
 import RecipeHub from './components/RecipeHub';
 import GennaCelebration from './components/GennaCelebration';
 import FestiveOverlay from './components/FestiveOverlay';
+import BackgroundMusic from './components/BackgroundMusic';
 import { Tab } from './types';
 
 const App: React.FC = () => {
@@ -64,9 +65,12 @@ const App: React.FC = () => {
       <FestiveOverlay activeTab={activeTab} />
 
       {/* Background decoration */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden opacity-20">
-        <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] ethiopian-gradient blur-[120px] rounded-full"></div>
-        <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-emerald-900 blur-[100px] rounded-full"></div>
+      <div className="fixed inset-0 pointer-events-none overflow-hidden opacity-50">
+        <div className="absolute top-[-10%] right-[-10%] w-[60%] h-[60%] bg-red-100 blur-[140px] rounded-full opacity-30"></div>
+        <div className="absolute bottom-[-10%] left-[-10%] w-[50%] h-[50%] bg-emerald-100 blur-[120px] rounded-full opacity-40"></div>
+        <div className="absolute top-[20%] left-[-5%] w-[30%] h-[30%] bg-amber-100 blur-[100px] rounded-full opacity-50"></div>
+        <div className="absolute top-[40%] right-[10%] w-[40%] h-[40%] bg-blue-50 blur-[130px] rounded-full opacity-20"></div>
+        <div className="absolute bottom-[20%] right-[-5%] w-[35%] h-[35%] bg-purple-50 blur-[110px] rounded-full opacity-20"></div>
       </div>
 
       {/* Navigation Header */}
@@ -76,23 +80,23 @@ const App: React.FC = () => {
             <span className="text-white font-serif text-xl font-bold">A</span>
           </div>
           <div>
-            <h1 className="text-lg font-serif font-bold text-stone-100 tracking-tight leading-none">Habesha Charisma</h1>
-            <p className="text-[10px] uppercase tracking-[0.2em] text-amber-500/70 font-bold">The Eternal Heart of Africa</p>
+            <h1 className="text-lg font-serif font-bold text-stone-950 tracking-tight leading-none">Habesha Charisma</h1>
+            <p className="text-[10px] uppercase tracking-[0.2em] text-amber-700 font-bold">The Eternal Heart of Africa</p>
           </div>
         </div>
 
         <div className="hidden md:flex space-x-8">
           {[
-            { id: Tab.CHAT, label: 'Chronicle' },
-            { id: Tab.GENNA, label: 'Genna' },
-            { id: Tab.VISUALS, label: 'Visions' },
-            { id: Tab.GASTRONOMY, label: 'Tastes' },
-            { id: Tab.COFFEE, label: 'Rituals' }
+            { id: Tab.CHAT, label: 'Chronicle', color: 'text-amber-800', border: 'border-amber-800' },
+            { id: Tab.GENNA, label: 'Genna', color: 'text-red-800', border: 'border-red-800' },
+            { id: Tab.VISUALS, label: 'Visions', color: 'text-emerald-800', border: 'border-emerald-800' },
+            { id: Tab.GASTRONOMY, label: 'Tastes', color: 'text-orange-800', border: 'border-orange-800' },
+            { id: Tab.COFFEE, label: 'Rituals', color: 'text-stone-800', border: 'border-stone-800' }
           ].map((item) => (
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id as Tab)}
-              className={`text-xs uppercase tracking-widest font-bold transition-all ${activeTab === item.id ? 'text-amber-400 border-b-2 border-amber-500' : 'text-stone-500 hover:text-stone-300'
+              className={`text-xs uppercase tracking-widest font-bold transition-all ${activeTab === item.id ? `${item.color} border-b-2 ${item.border}` : 'text-stone-500 hover:text-stone-900'
                 }`}
             >
               {item.label}
@@ -101,8 +105,12 @@ const App: React.FC = () => {
         </div>
 
         <div className="flex items-center space-x-4">
-          <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse"></div>
-          <span className="text-[10px] text-stone-500 uppercase tracking-widest font-bold">BEK DEV</span>
+          <div className="flex space-x-1">
+            <div className="h-2 w-2 rounded-full bg-green-500"></div>
+            <div className="h-2 w-2 rounded-full bg-yellow-400"></div>
+            <div className="h-2 w-2 rounded-full bg-red-500"></div>
+          </div>
+          <span className="text-[10px] text-stone-600 uppercase tracking-widest font-bold">BEK DEV</span>
         </div>
       </nav>
 
@@ -123,7 +131,7 @@ const App: React.FC = () => {
           <button
             key={item.id}
             onClick={() => setActiveTab(item.id as Tab)}
-            className={`text-xl p-2 rounded-lg transition-all ${activeTab === item.id ? 'bg-amber-500/20 scale-110' : 'opacity-50'
+            className={`text-xl p-2 rounded-lg transition-all ${activeTab === item.id ? 'bg-amber-100 scale-110' : 'opacity-60'
               }`}
           >
             {item.icon}
@@ -131,9 +139,11 @@ const App: React.FC = () => {
         ))}
       </div>
 
-      <footer className="relative z-10 py-6 text-center text-stone-600 text-[10px] uppercase tracking-widest">
+      <footer className="relative z-10 py-6 text-center text-stone-600 text-[10px] uppercase tracking-widest font-bold">
         &copy; {new Date().getFullYear()} Habesha Charisma &bull; Crafted with Eternal Spirit
       </footer>
+
+      <BackgroundMusic />
     </div>
   );
 };

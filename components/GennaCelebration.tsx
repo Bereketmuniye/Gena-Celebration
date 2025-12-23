@@ -28,9 +28,9 @@ const GennaCelebration: React.FC = () => {
     <div className="space-y-8 animate-fadeIn">
       <div className="relative h-64 md:h-80 rounded-3xl overflow-hidden shadow-2xl">
         <div className="absolute inset-0 bg-gradient-to-r from-red-900/80 to-amber-900/80 z-10"></div>
-        <img 
-          src="https://images.unsplash.com/photo-1543362906-acfc16c623a2?q=80&w=1000&auto=format&fit=crop" 
-          alt="Festive Ethiopia" 
+        <img
+          src="https://images.unsplash.com/photo-1543362906-acfc16c623a2?q=80&w=1000&auto=format&fit=crop"
+          alt="Festive Ethiopia"
           className="absolute inset-0 w-full h-full object-cover"
         />
         <div className="relative z-20 h-full flex flex-col items-center justify-center text-center p-6">
@@ -45,40 +45,40 @@ const GennaCelebration: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="glass-card p-6 rounded-2xl border-amber-500/20">
+        <div className="glass-card p-6 rounded-2xl border-amber-500/30 bg-amber-50/30">
           <div className="text-3xl mb-4">🏑</div>
-          <h3 className="text-xl font-serif text-amber-400 mb-2">Ye-Genna Chewata</h3>
-          <p className="text-stone-400 text-sm leading-relaxed">
+          <h3 className="text-xl font-serif text-amber-800 mb-2 font-bold">Ye-Genna Chewata</h3>
+          <p className="text-stone-800 text-sm leading-relaxed font-medium">
             Legend says when the shepherds heard of Jesus' birth, they played this game with their crooks. Today, it remains a spirited holiday tradition for men and boys across the highlands.
           </p>
         </div>
-        <div className="glass-card p-6 rounded-2xl border-emerald-500/20">
+        <div className="glass-card p-6 rounded-2xl border-emerald-500/30 bg-emerald-50/30">
           <div className="text-3xl mb-4">⛪</div>
-          <h3 className="text-xl font-serif text-emerald-400 mb-2">The Night Vigil</h3>
-          <p className="text-stone-400 text-sm leading-relaxed">
+          <h3 className="text-xl font-serif text-emerald-800 mb-2 font-bold">The Night Vigil</h3>
+          <p className="text-stone-800 text-sm leading-relaxed font-medium">
             Clad in white 'Netelas', thousands gather at the rock-hewn churches of Lalibela. The air is thick with the scent of frankincense and the rhythmic chanting of the Ge'ez liturgy.
           </p>
         </div>
-        <div className="glass-card p-6 rounded-2xl border-red-500/20">
+        <div className="glass-card p-6 rounded-2xl border-red-500/30 bg-red-50/30">
           <div className="text-3xl mb-4">🍗</div>
-          <h3 className="text-xl font-serif text-red-400 mb-2">The Christmas Feast</h3>
-          <p className="text-stone-400 text-sm leading-relaxed">
+          <h3 className="text-xl font-serif text-red-800 mb-2 font-bold">The Christmas Feast</h3>
+          <p className="text-stone-800 text-sm leading-relaxed font-medium">
             After 43 days of fasting (Tsome Gehad), families break bread with 'Doro Wat'—a rich chicken stew with 12 pieces of chicken representing the 12 apostles.
           </p>
         </div>
       </div>
 
-      <div className="glass-card rounded-2xl p-8 text-center max-w-2xl mx-auto border-amber-500/30 bg-amber-950/10">
-        <h3 className="text-2xl font-serif text-amber-400 mb-6">Receive a Genna Blessing</h3>
+      <div className="glass-card rounded-2xl p-8 text-center max-w-2xl mx-auto border-amber-500/30 bg-amber-50/50">
+        <h3 className="text-2xl font-serif text-amber-800 mb-6 font-bold">Receive a Genna Blessing</h3>
         <button
           onClick={requestBlessing}
           disabled={loading}
-          className="px-8 py-4 bg-amber-600 hover:bg-amber-500 text-white rounded-2xl font-bold transition-all shadow-xl hover:shadow-amber-600/20 disabled:opacity-50"
+          className="px-8 py-4 bg-amber-700 hover:bg-amber-800 text-white rounded-2xl font-bold transition-all shadow-xl hover:shadow-amber-700/20 disabled:opacity-50"
         >
           {loading ? 'Chanting...' : 'Invoke Blessing'}
         </button>
         {blessing && (
-          <div className="mt-8 p-6 bg-stone-900/50 rounded-xl border border-stone-800 text-amber-100 font-serif italic animate-fadeIn leading-loose whitespace-pre-wrap">
+          <div className="mt-8 p-6 bg-white rounded-xl border border-amber-100 text-stone-900 font-serif italic animate-fadeIn leading-loose whitespace-pre-wrap shadow-inner font-medium">
             {blessing}
           </div>
         )}

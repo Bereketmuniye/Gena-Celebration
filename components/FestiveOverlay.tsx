@@ -22,12 +22,12 @@ interface Particle {
 }
 
 const COLORS = {
-  green: '#078930',
-  gold: '#FCDD09',
-  red: '#DA121A',
-  adeyAbeba: '#FFD700', // Traditional Yellow Flower
-  ketema: '#14532D',    // Traditional Green Grass
-  glow: '#FFF7ED',
+  green: '#006400',    // Dark Green
+  gold: '#FFD700',     // Gold
+  red: '#8B0000',      // Deep Red
+  adeyAbeba: '#FFD700',
+  ketema: '#006400',
+  glow: '#FFD700',
 };
 
 interface FestiveOverlayProps {
@@ -86,7 +86,7 @@ const FestiveOverlay: React.FC<FestiveOverlayProps> = ({ activeTab }) => {
       const rand = Math.random();
 
       let type: Particle['type'] = 'flower';
-      let color = COLORS.adeyAbeba;
+      let color = COLORS.gold;
       let radius = Math.random() * 6 + 4;
       let life = 0.002 + Math.random() * 0.007;
 
@@ -104,6 +104,10 @@ const FestiveOverlay: React.FC<FestiveOverlayProps> = ({ activeTab }) => {
         color = COLORS.glow;
         radius = Math.random() * 2 + 1;
         life = 0.01 + Math.random() * 0.02;
+      } else {
+        // Randomize flower colors from the festive palette
+        const flowerColors = [COLORS.red, COLORS.gold, COLORS.green];
+        color = flowerColors[Math.floor(Math.random() * flowerColors.length)];
       }
 
       particles.current.push({
@@ -300,8 +304,8 @@ const FestiveOverlay: React.FC<FestiveOverlayProps> = ({ activeTab }) => {
         ref={canvasRef}
         className="fixed inset-0 pointer-events-none z-[9999]"
         style={{
-          mixBlendMode: 'screen',
-          filter: 'contrast(1.1) brightness(1.2) saturate(1.3)'
+          mixBlendMode: 'normal',
+          filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))'
         }}
       />
       <button
