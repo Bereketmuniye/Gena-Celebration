@@ -41,7 +41,7 @@ const CelebrationHighlight: React.FC = () => {
     };
 
     return (
-        <div className="relative w-full h-[600px] md:h-[700px] rounded-[3rem] overflow-hidden shadow-[0_32px_64px_-15px_rgba(0,0,0,0.3)] group border-8 border-white/10">
+        <div className="relative w-full h-[450px] md:h-[700px] rounded-[2rem] md:rounded-[3rem] overflow-hidden shadow-[0_32px_64px_-15px_rgba(0,0,0,0.3)] group border-4 md:border-8 border-white/10">
             {/* Background Images with Ken Burns Effect */}
             {highlights.map((h, i) => (
                 <div
@@ -60,35 +60,35 @@ const CelebrationHighlight: React.FC = () => {
             ))}
 
             {/* Content Overlay */}
-            <div className="absolute inset-0 z-20 flex flex-col justify-end p-12 md:p-20">
+            <div className="absolute inset-0 z-20 flex flex-col justify-end p-6 md:p-20">
                 <div className={`max-w-4xl transition-all duration-1000 transform ${isTransitioning ? 'opacity-0 translate-y-12' : 'opacity-100 translate-y-0'}`}>
-                    <div className="flex items-center space-x-4 mb-6">
-                        <div className="h-px w-12 bg-white/50"></div>
-                        <span className="text-[10px] uppercase tracking-[0.5em] font-bold text-white/80">
+                    <div className="flex items-center space-x-3 md:space-x-4 mb-4 md:mb-6">
+                        <div className="h-px w-8 md:w-12 bg-white/50"></div>
+                        <span className="text-[8px] md:text-[10px] uppercase tracking-[0.5em] font-bold text-white/80">
                             The Habesha Odyssey
                         </span>
                     </div>
 
-                    <h2 className={`text-5xl md:text-8xl font-serif font-bold mb-6 leading-tight ${highlights[currentIndex].color} drop-shadow-2xl`}>
+                    <h2 className={`text-3xl md:text-8xl font-serif font-bold mb-4 md:mb-6 leading-tight ${highlights[currentIndex].color} drop-shadow-2xl`}>
                         {highlights[currentIndex].title}
                     </h2>
 
-                    <p className="text-white/90 text-xl md:text-2xl max-w-2xl leading-relaxed font-light italic drop-shadow-lg">
+                    <p className="text-white/90 text-sm md:text-2xl max-w-2xl leading-relaxed font-light italic drop-shadow-lg">
                         "{highlights[currentIndex].description}"
                     </p>
                 </div>
 
                 {/* Progress Indicators */}
-                <div className="flex items-center space-x-6 mt-16">
+                <div className="flex items-center space-x-4 md:space-x-6 mt-8 md:mt-16">
                     {highlights.map((_, i) => (
                         <button
                             key={i}
                             onClick={() => setCurrentIndex(i)}
-                            className="relative h-12 flex items-center group"
+                            className="relative h-8 md:h-12 flex items-center group"
                         >
-                            <div className={`h-1 transition-all duration-700 rounded-full ${i === currentIndex ? 'w-16 bg-white' : 'w-8 bg-white/20 group-hover:bg-white/40'
+                            <div className={`h-1 transition-all duration-700 rounded-full ${i === currentIndex ? 'w-12 md:w-16 bg-white' : 'w-6 md:w-8 bg-white/20 group-hover:bg-white/40'
                                 }`} />
-                            <span className={`absolute -top-6 left-0 text-[10px] font-bold transition-opacity duration-500 ${i === currentIndex ? 'opacity-100 text-white' : 'opacity-0'
+                            <span className={`absolute -top-4 md:-top-6 left-0 text-[8px] md:text-[10px] font-bold transition-opacity duration-500 ${i === currentIndex ? 'opacity-100 text-white' : 'opacity-0'
                                 }`}>
                                 0{i + 1}
                             </span>
@@ -98,23 +98,23 @@ const CelebrationHighlight: React.FC = () => {
             </div>
 
             {/* Navigation Arrows */}
-            <div className="absolute top-1/2 -translate-y-1/2 left-8 right-8 z-30 flex justify-between opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+            <div className="absolute top-1/2 -translate-y-1/2 left-4 right-4 md:left-8 md:right-8 z-30 flex justify-between opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                 <button
                     onClick={() => setCurrentIndex((prev) => (prev - 1 + highlights.length) % highlights.length)}
-                    className="p-4 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 text-white hover:bg-white/20 transition-all"
+                    className="p-2 md:p-4 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 text-white hover:bg-white/20 transition-all"
                 >
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 19l-7-7 7-7" /></svg>
+                    <svg className="w-4 h-4 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 19l-7-7 7-7" /></svg>
                 </button>
                 <button
                     onClick={nextSlide}
-                    className="p-4 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 text-white hover:bg-white/20 transition-all"
+                    className="p-2 md:p-4 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 text-white hover:bg-white/20 transition-all"
                 >
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5l7 7-7 7" /></svg>
+                    <svg className="w-4 h-4 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5l7 7-7 7" /></svg>
                 </button>
             </div>
 
             {/* Cinematic Vignette */}
-            <div className="absolute inset-0 pointer-events-none shadow-[inset_0_0_150px_rgba(0,0,0,0.5)] z-40"></div>
+            <div className="absolute inset-0 pointer-events-none shadow-[inset_0_0_100px_rgba(0,0,0,0.5)] md:shadow-[inset_0_0_150px_rgba(0,0,0,0.5)] z-40"></div>
         </div>
     );
 };

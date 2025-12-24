@@ -162,7 +162,9 @@ const FestiveOverlay: React.FC<FestiveOverlayProps> = ({ activeTab }) => {
       ctx.shadowColor = COLORS.gold;
 
       // Amharic Greeting
-      ctx.font = 'bold 64px "Playfair Display", serif';
+      const isMobile = canvas.width < 768;
+      const fontSize = isMobile ? 40 : 64;
+      ctx.font = `bold ${fontSize}px "Playfair Display", serif`;
       const gradient = ctx.createLinearGradient(centerX - 100, 0, centerX + 100, 0);
       gradient.addColorStop(0, COLORS.green);
       gradient.addColorStop(0.5, COLORS.gold);
@@ -172,9 +174,10 @@ const FestiveOverlay: React.FC<FestiveOverlayProps> = ({ activeTab }) => {
       ctx.fillText('መልካም ገና!', centerX, centerY);
 
       // English Translation
-      ctx.font = '300 32px "Inter", sans-serif';
+      const subFontSize = isMobile ? 20 : 32;
+      ctx.font = `300 ${subFontSize}px "Inter", sans-serif`;
       ctx.fillStyle = COLORS.glow;
-      ctx.fillText('Melkam Genna', centerX, centerY + 50);
+      ctx.fillText('Melkam Genna', centerX, centerY + (isMobile ? 35 : 50));
 
       ctx.restore();
     };
@@ -330,7 +333,7 @@ const FestiveOverlay: React.FC<FestiveOverlayProps> = ({ activeTab }) => {
       />
       <button
         onClick={() => spawnFlowerGalaxy(window.innerWidth / 2, window.innerHeight / 2.5, 350, true)}
-        className="fixed bottom-6 right-6 z-[10000] bg-amber-600/80 hover:bg-amber-500 text-white p-3 rounded-full shadow-lg transition-all hover:scale-110 backdrop-blur-sm"
+        className="fixed bottom-24 md:bottom-6 right-4 md:right-6 z-[10000] bg-amber-600/80 hover:bg-amber-500 text-white p-3 rounded-full shadow-lg transition-all hover:scale-110 backdrop-blur-sm"
         title="Replay Celebration"
       >
         🎉

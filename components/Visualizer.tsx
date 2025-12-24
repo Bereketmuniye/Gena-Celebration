@@ -33,8 +33,8 @@ const Visualizer: React.FC = () => {
 
   return (
     <div className="h-full flex flex-col space-y-6">
-      <div className="glass-card p-6 rounded-2xl shadow-xl">
-        <h2 className="text-2xl font-serif text-amber-800 mb-4 font-bold">Visions of Abyssinia</h2>
+      <div className="glass-card p-5 md:p-6 rounded-2xl shadow-xl">
+        <h2 className="text-xl md:text-2xl font-serif text-amber-800 mb-4 font-bold">Visions of Abyssinia</h2>
         <div className="flex flex-wrap gap-2 mb-6">
           {presets.map((p, i) => {
             const colors = [
@@ -48,48 +48,48 @@ const Visualizer: React.FC = () => {
               <button
                 key={i}
                 onClick={() => handleGenerate(p)}
-                className={`text-xs px-3 py-1.5 rounded-full border transition-colors font-bold ${colors[i % colors.length]}`}
+                className={`text-[10px] md:text-xs px-3 py-1.5 rounded-full border transition-colors font-bold ${colors[i % colors.length]}`}
               >
                 {p}
               </button>
             );
           })}
         </div>
-        <div className="flex space-x-3">
+        <div className="flex flex-col sm:flex-row gap-3">
           <input
             type="text"
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
             placeholder="Describe your vision..."
-            className="flex-1 bg-white border border-stone-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-amber-600/50 text-sm text-stone-950 font-medium placeholder:text-stone-400"
+            className="flex-1 bg-white border border-stone-300 rounded-xl px-4 py-2.5 md:py-3 focus:outline-none focus:ring-2 focus:ring-amber-600/50 text-xs md:text-sm text-stone-950 font-medium placeholder:text-stone-400"
           />
           <button
             onClick={() => handleGenerate()}
             disabled={isLoading}
-            className="bg-emerald-700 hover:bg-emerald-800 text-white px-6 py-3 rounded-xl font-bold transition-all disabled:opacity-50 shadow-lg"
+            className="bg-emerald-700 hover:bg-emerald-800 text-white px-6 py-2.5 md:py-3 rounded-xl font-bold transition-all disabled:opacity-50 shadow-lg text-sm"
           >
             {isLoading ? 'Painting...' : 'Visualize'}
           </button>
         </div>
       </div>
 
-      <div className="flex-1 glass-card rounded-2xl overflow-hidden relative flex items-center justify-center min-h-[300px]">
+      <div className="flex-1 glass-card rounded-2xl overflow-hidden relative flex items-center justify-center min-h-[300px] md:min-h-[400px]">
         {isLoading ? (
-          <div className="flex flex-col items-center space-y-4">
-            <div className="w-12 h-12 border-4 border-amber-600 border-t-transparent rounded-full animate-spin"></div>
-            <p className="text-stone-700 font-bold">Manifesting Abyssinian Charisma...</p>
+          <div className="flex flex-col items-center space-y-4 p-8">
+            <div className="w-10 md:w-12 h-10 md:h-12 border-4 border-amber-600 border-t-transparent rounded-full animate-spin"></div>
+            <p className="text-stone-700 font-bold text-sm md:text-base">Manifesting Abyssinian Charisma...</p>
           </div>
         ) : image ? (
           <img src={image} alt="Generated Ethiopian Vision" className="w-full h-full object-cover" />
         ) : (
-          <div className="text-center p-12">
-            <div className="w-20 h-20 bg-stone-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-stone-200">
-              <svg className="w-10 h-10 text-stone-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="text-center p-8 md:p-12">
+            <div className="w-16 h-16 md:w-20 md:h-20 bg-stone-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-stone-200">
+              <svg className="w-8 h-8 md:w-10 md:h-10 text-stone-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
             </div>
-            <h3 className="text-stone-900 font-serif text-lg font-bold">Your Canvas Awaits</h3>
-            <p className="text-stone-700 text-sm max-w-xs mx-auto font-medium">Enter a description or choose a preset to generate breathtaking Ethiopian artwork.</p>
+            <h3 className="text-stone-900 font-serif text-base md:text-lg font-bold">Your Canvas Awaits</h3>
+            <p className="text-stone-700 text-xs md:text-sm max-w-xs mx-auto font-medium leading-relaxed">Enter a description or choose a preset to generate breathtaking Ethiopian artwork.</p>
           </div>
         )}
       </div>
