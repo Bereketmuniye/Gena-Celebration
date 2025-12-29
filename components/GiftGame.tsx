@@ -6,19 +6,41 @@ interface Gift {
     id: number;
     x: number;
     y: number;
-    type: 'red' | 'gold' | 'green';
+    type: 'red' | 'gold' | 'green' | 'candle' | 'coffee' | 'scarf' | 'cross' | 'crown' | 'special';
     speed: number;
 }
 
+interface Particle {
+    id: number;
+    x: number;
+    y: number;
+    vx: number;
+    vy: number;
+    life: number;
+    color: string;
+    emoji?: string;
+}
+
+interface FloatingText {
+    id: number;
+    x: number;
+    y: number;
+    text: string;
+    life: number;
+}
+
 const getTimeBonus = (score: number) => {
-    // Scale time with performance: higher score -> larger bonus.
-    // Floor keeps it predictable; minimum cushion prevents zero bonus.
-    return Math.max(5, Math.floor(score / 20));
+    // Scale time with performance but cap it to avoid infinite play
+    return Math.min(45, Math.floor(score / 100) + 10);
 };
 
 const GiftGame: React.FC = () => {
     const [score, setScore] = useState(0);
+    const [highScore, setHighScore] = useState(0);
     const [gifts, setGifts] = useState<Gift[]>([]);
+    const [particles, setParticles] = useState<Particle[]>([]);
+    const [floatingTexts, setFloatingTexts] = useState<FloatingText[]>([]);
+    const [shake, setShake] = useState(0);
     const [isPlaying, setIsPlaying] = useState(false);
     const [timeLeft, setTimeLeft] = useState(30);
     const [currentLevel, setCurrentLevel] = useState(0);
@@ -27,17 +49,110 @@ const GiftGame: React.FC = () => {
     const [hasClickedBox, setHasClickedBox] = useState(false);
     const gameRef = useRef<HTMLDivElement>(null);
     const nextId = useRef(0);
+    const nextParticleId = useRef(0);
+    const nextTextId = useRef(0);
 
     const getLevelInfo = (s: number) => {
-        if (s >= 1200) return { level: 5, gift: 'Golden Crown of Lalibela', icon: '👑', color: 'text-amber-600' };
-        if (s >= 800) return { level: 4, gift: 'Ceramic Coffee Set (Jebena)', icon: '☕', color: 'text-stone-800' };
-        if (s >= 500) return { level: 3, gift: 'Royal Gabi (Traditional Blanket)', icon: '🧣', color: 'text-emerald-700' };
-        if (s >= 250) return { level: 2, gift: 'Handcrafted Meskel Cross', icon: '✝️', color: 'text-red-800' };
-        if (s >= 100) return { level: 1, gift: 'Traditional Netela (Elegant Scarf)', icon: '🎗️', color: 'text-stone-600' };
-        return { level: 0, gift: 'Small Genna Candle', icon: '🕯️', color: 'text-stone-400' };
+
+        if (s >= 10000) return {
+            level: 5,
+            gift: 'Golden Crown of Lalibela',
+            icon: '👑',
+            color: 'text-amber-600',
+            theme: {
+                bg: 'bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-amber-200 via-yellow-100 to-amber-50',
+                border: 'border-amber-400',
+                shadow: 'shadow-[0_0_50px_rgba(245,158,11,0.5)]',
+                text: 'text-amber-900',
+                accent: 'text-amber-600',
+                pattern: 'opacity-20 bg-[url("data:image/svg+xml,%3Csvg width=\'20\' height=\'20\' viewBox=\'0 0 20 20\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'%23d97706\' fill-opacity=\'0.4\' fill-rule=\'evenodd\'%3E%3Ccircle cx=\'3\' cy=\'3\' r=\'3\'/%3E%3Ccircle cx=\'13\' cy=\'13\' r=\'3\'/%3E%3C/g%3E%3C/svg%3E")]'
+            }
+        };
+        if (s >= 6000) return {
+            level: 4,
+            gift: 'Ceramic Coffee Set (Jebena)',
+            icon: '☕',
+            color: 'text-stone-800',
+            theme: {
+                bg: 'bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-stone-300 via-stone-200 to-stone-100',
+                border: 'border-stone-600',
+                shadow: 'shadow-[0_0_50px_rgba(87,83,78,0.5)]',
+                text: 'text-stone-900',
+                accent: 'text-stone-700',
+                pattern: 'opacity-10 bg-[url("data:image/svg+xml,%3Csvg width=\'20\' height=\'20\' viewBox=\'0 0 20 20\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M1 1h2v2H1V1zm4 0h2v2H5V1zm4 0h2v2H9V1z\' fill=\'%23292524\' fill-opacity=\'0.4\' fill-rule=\'evenodd\'/%3E%3C/svg%3E")]'
+            }
+        };
+        if (s >= 3000) return {
+            level: 3,
+            gift: 'Royal Gabi (Traditional Blanket)',
+            icon: '🧣',
+            color: 'text-emerald-700',
+            theme: {
+                bg: 'bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-emerald-200 via-green-100 to-emerald-50',
+                border: 'border-emerald-400',
+                shadow: 'shadow-[0_0_50px_rgba(16,185,129,0.5)]',
+                text: 'text-emerald-900',
+                accent: 'text-emerald-600',
+                pattern: 'opacity-20 bg-[url("data:image/svg+xml,%3Csvg width=\'20\' height=\'20\' viewBox=\'0 0 20 20\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M0 0h20v20H0V0zm10 17l-7-7h14l-7 7z\' fill=\'%23059669\' fill-opacity=\'0.2\' fill-rule=\'evenodd\'/%3E%3C/svg%3E")]'
+            }
+        };
+        if (s >= 1000) return {
+            level: 2,
+            gift: 'Handcrafted Meskel Cross',
+            icon: '✝️',
+            color: 'text-red-800',
+            theme: {
+                bg: 'bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-red-200 via-rose-100 to-red-50',
+                border: 'border-red-400',
+                shadow: 'shadow-[0_0_50px_rgba(239,68,68,0.5)]',
+                text: 'text-red-900',
+                accent: 'text-red-600',
+                pattern: 'opacity-15 bg-[url("data:image/svg+xml,%3Csvg width=\'40\' height=\'40\' viewBox=\'0 0 40 40\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'%23b91c1c\' fill-opacity=\'0.2\' fill-rule=\'evenodd\'%3E%3Cpath d=\'M0 40L40 0H20L0 20M40 40V20L20 40\'/%3E%3C/g%3E%3C/svg%3E")]'
+            }
+        };
+        if (s >= 300) return {
+            level: 1,
+            gift: 'Traditional Netela (Elegant Scarf)',
+            icon: '🎗️',
+            color: 'text-stone-600',
+            theme: {
+                bg: 'bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-stone-200 via-gray-100 to-stone-50',
+                border: 'border-stone-400',
+                shadow: 'shadow-[0_0_50px_rgba(168,162,158,0.5)]',
+                text: 'text-stone-800',
+                accent: 'text-stone-500',
+                pattern: 'opacity-10 bg-[url("data:image/svg+xml,%3Csvg width=\'20\' height=\'20\' viewBox=\'0 0 20 20\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Ccircle cx=\'2\' cy=\'2\' r=\'2\' fill=\'%2357534e\' fill-opacity=\'0.2\'/%3E%3C/svg%3E")]'
+            }
+        };
+        return {
+            level: 0,
+            gift: 'Small Genna Candle',
+            icon: '🕯️',
+            color: 'text-stone-400',
+            theme: {
+                bg: 'bg-stone-50/30',
+                border: 'border-white/50',
+                shadow: 'shadow-xl',
+                text: 'text-stone-900',
+                accent: 'text-amber-800',
+                pattern: ''
+            }
+        };
     };
 
     const levelInfo = getLevelInfo(score);
+
+    useEffect(() => {
+        const saved = localStorage.getItem('gennaHighScore');
+        if (saved) setHighScore(parseInt(saved));
+    }, []);
+
+    useEffect(() => {
+        if (score > highScore) {
+            setHighScore(score);
+            localStorage.setItem('gennaHighScore', score.toString());
+        }
+    }, [score, highScore]);
 
     useEffect(() => {
         if (levelInfo.level > currentLevel) {
@@ -64,6 +179,8 @@ const GiftGame: React.FC = () => {
         setScore(0);
         setCurrentLevel(0);
         setGifts([]);
+        setParticles([]);
+        setFloatingTexts([]);
         setIsPlaying(true);
         setTimeLeft(30);
     };
@@ -74,12 +191,32 @@ const GiftGame: React.FC = () => {
         const spawnInterval = setInterval(() => {
             if (gameRef.current) {
                 const width = gameRef.current.offsetWidth;
+
+                // 5% chance to spawn a special time-bonus gift
+                const isSpecial = Math.random() < 0.05;
+
+                let type: Gift['type'];
+                let speed: number;
+
+                if (isSpecial) {
+                    type = 'special';
+                    speed = Math.random() * 3 + 4 + (currentLevel * 1.5); // Fast!
+                } else {
+                    // Determine available gift types based on level
+                    const availableTypes: Gift['type'][] = ['red', 'gold', 'green'];
+                    if (currentLevel >= 1) availableTypes.push('candle', 'scarf');
+                    if (currentLevel >= 2) availableTypes.push('coffee', 'cross');
+                    if (currentLevel >= 3) availableTypes.push('crown');
+                    type = availableTypes[Math.floor(Math.random() * availableTypes.length)];
+                    speed = Math.random() * 2 + 2 + (currentLevel * 2.5);
+                }
+
                 const newGift: Gift = {
                     id: nextId.current++,
                     x: Math.random() * (width - 60) + 30,
                     y: -100,
-                    type: ['red', 'gold', 'green'][Math.floor(Math.random() * 3)] as any,
-                    speed: Math.random() * 2 + 2,
+                    type,
+                    speed,
                 };
                 setGifts((prev) => [...prev, newGift]);
             }
@@ -111,23 +248,124 @@ const GiftGame: React.FC = () => {
                     .map((g) => ({ ...g, y: g.y + g.speed }))
                     .filter((g) => g.y < 1000)
             );
+
+            // Update particles
+            setParticles(prev => prev
+                .map(p => ({
+                    ...p,
+                    x: p.x + p.vx,
+                    y: p.y + p.vy,
+                    vy: p.vy + 0.5, // gravity
+                    life: p.life - 1
+                }))
+                .filter(p => p.life > 0)
+            );
+
+            // Update floating texts
+            setFloatingTexts(prev => prev
+                .map(t => ({
+                    ...t,
+                    y: t.y - 1,
+                    life: t.life - 1
+                }))
+                .filter(t => t.life > 0)
+            );
+
+            // Reduce shake
+            setShake(prev => prev > 0 ? prev - 1 : 0);
+
         }, 16);
 
         return () => clearInterval(moveInterval);
     }, [isPlaying, showLevelUp]);
 
-    const catchGift = (id: number) => {
-        setScore((prev) => prev + 10);
-        setGifts((prev) => prev.filter((g) => g.id !== id));
+    const spawnParticles = (x: number, y: number, color: string) => {
+        const newParticles: Particle[] = [];
+        for (let i = 0; i < 8; i++) {
+            newParticles.push({
+                id: nextParticleId.current++,
+                x,
+                y,
+                vx: (Math.random() - 0.5) * 10,
+                vy: (Math.random() - 0.5) * 10 - 5,
+                life: 30 + Math.random() * 20,
+                color,
+                emoji: ['✨', '⭐', '💫'][Math.floor(Math.random() * 3)]
+            });
+        }
+        setParticles(prev => [...prev, ...newParticles]);
     };
+
+    const catchGift = (id: number, x: number, y: number, type: string) => {
+        let points = 10;
+        let color = '#ef4444';
+
+        switch (type) {
+            case 'crown': points = 100; color = '#fbbf24'; break; // Amber
+            case 'special': points = 50; color = '#ec4899'; break; // Pink
+            case 'cross': points = 40; color = '#b91c1c'; break; // Red
+            case 'coffee': points = 30; color = '#78350f'; break; // Brown
+            case 'scarf': points = 25; color = '#14b8a6'; break; // Teal
+            case 'candle': points = 20; color = '#f97316'; break; // Orange
+            case 'gold': points = 15; color = '#eab308'; break; // Yellow
+            case 'green': points = 10; color = '#22c55e'; break; // Green
+            default: points = 10; color = '#ef4444'; break; // Red
+        }
+
+        const isSpecial = type === 'special';
+
+        setScore((prev) => prev + points);
+        setGifts((prev) => prev.filter((g) => g.id !== id));
+
+        if (isSpecial) {
+            setTimeLeft((prev) => prev + 5);
+            playLevelUpSound(); // Reuse sound for special effect
+        }
+
+        // Visual Juice
+        setShake(isSpecial ? 10 : 5);
+        spawnParticles(x, y, color);
+
+        // Floating Text
+        setFloatingTexts(prev => [...prev, {
+            id: nextTextId.current++,
+            x,
+            y,
+            text: isSpecial ? `+${points} 🕒` : `+${points}`,
+            life: 40
+        }]);
+    };
+
+    // Calculate progress to next level
+    const nextLevelScore =
+        score < 300 ? 300 :
+            score < 1000 ? 1000 :
+                score < 3000 ? 3000 :
+                    score < 6000 ? 6000 :
+                        score < 10000 ? 10000 : 10000;
+
+    const prevLevelScore =
+        score < 300 ? 0 :
+            score < 1000 ? 300 :
+                score < 3000 ? 1000 :
+                    score < 6000 ? 3000 :
+                        score < 10000 ? 6000 : 6000;
+
+    const progress = Math.min(100, Math.max(0, ((score - prevLevelScore) / (nextLevelScore - prevLevelScore)) * 100));
 
     return (
         <div className="h-full flex flex-col space-y-6">
-            <div className="glass-card p-3 md:p-6 rounded-2xl md:rounded-3xl flex flex-col sm:flex-row items-center justify-between gap-3 md:gap-4 shadow-xl">
+            <motion.div
+                animate={{
+                    borderColor: levelInfo.level > 0 ? 'var(--border-color)' : 'transparent',
+                }}
+                className={`glass-card p-3 md:p-6 rounded-2xl md:rounded-3xl flex flex-col sm:flex-row items-center justify-between gap-3 md:gap-4 transition-all duration-500 ${levelInfo.theme.shadow} border-2 ${levelInfo.theme.border}`}
+            >
                 <div className="flex items-center space-x-3 md:space-x-6">
                     <div className="text-center">
                         <p className="text-[7px] md:text-[10px] uppercase tracking-widest font-bold text-stone-400 mb-0.5 md:mb-1">Score</p>
-                        <p className="text-lg md:text-3xl font-serif font-bold text-amber-800">{score}</p>
+                        <p className={`text-lg md:text-3xl font-serif font-bold ${levelInfo.theme.accent}`}>{score}</p>
+                        <p className="text-[6px] md:text-[8px] font-bold text-stone-400">HI: {highScore}</p>
                     </div>
                     <div className="h-6 md:h-10 w-px bg-stone-200"></div>
                     <div className="text-center">
@@ -149,20 +387,36 @@ const GiftGame: React.FC = () => {
                         {timeLeft === 0 ? 'Play Again' : 'Start Game'}
                     </button>
                 ) : (
-                    <div className="flex items-center space-x-3 md:space-x-4">
-                        <div className="text-right">
-                            <p className="text-[8px] md:text-[10px] uppercase tracking-widest font-bold text-stone-400">Next Reward</p>
-                            <p className="text-[10px] md:text-xs font-bold text-stone-900">{levelInfo.gift}</p>
+                    <div className="flex flex-col items-end space-y-1">
+                        <div className="flex items-center space-x-3 md:space-x-4">
+                            <div className="text-right">
+                                <p className="text-[8px] md:text-[10px] uppercase tracking-widest font-bold text-stone-400">Next Reward</p>
+                                <p className="text-[10px] md:text-xs font-bold text-stone-900">{levelInfo.gift}</p>
+                            </div>
+                            <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></div>
                         </div>
-                        <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                        {/* Progress Bar */}
+                        <div className="w-24 md:w-32 h-1 bg-stone-200 rounded-full overflow-hidden">
+                            <motion.div
+                                animate={{ width: `${progress}%` }}
+                                className={`h-full ${levelInfo.color.replace('text-', 'bg-')}`}
+                            />
+                        </div>
                     </div>
                 )}
-            </div>
+            </motion.div>
 
-            <div
+            <motion.div
                 ref={gameRef}
-                className="relative flex-1 glass-card rounded-[1.5rem] md:rounded-[3rem] overflow-hidden border-2 md:border-4 border-white/50 shadow-inner bg-stone-50/30 min-h-[400px] md:min-h-[800px]"
+                animate={{
+                    backgroundColor: 'var(--bg-color)',
+                    x: shake > 0 ? [0, -5, 5, -5, 5, 0] : 0
+                }}
+                transition={{ duration: 0.2 }}
+                className={`relative flex-1 rounded-[1.5rem] md:rounded-[3rem] overflow-hidden border-2 md:border-4 transition-colors duration-500 shadow-inner min-h-[400px] md:min-h-[800px] ${levelInfo.theme.bg} ${levelInfo.theme.border}`}
             >
+                {/* Background Pattern */}
+                <div className={`absolute inset-0 pointer-events-none transition-opacity duration-1000 ${levelInfo.theme.pattern}`} />
                 {!isPlaying && timeLeft === 30 && (
                     <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6 md:p-8">
                         <div className="text-5xl md:text-6xl mb-4 md:mb-6 animate-float">🎁</div>
@@ -172,10 +426,10 @@ const GiftGame: React.FC = () => {
                         </p>
                         <div className="grid grid-cols-2 gap-2 md:gap-4 text-left max-w-md">
                             <div className="text-[8px] md:text-[10px] font-bold text-stone-400 uppercase tracking-widest col-span-2 mb-1 md:mb-2">Rewards</div>
-                            <div className="text-[10px] md:text-xs font-medium">100+ pts: Netela</div>
-                            <div className="text-[10px] md:text-xs font-medium">250+ pts: Meskel Cross</div>
-                            <div className="text-[10px] md:text-xs font-medium">500+ pts: Royal Gabi</div>
-                            <div className="text-[10px] md:text-xs font-medium">800+ pts: Coffee Set</div>
+                            <div className="text-[10px] md:text-xs font-medium">300+ pts: Netela</div>
+                            <div className="text-[10px] md:text-xs font-medium">1000+ pts: Meskel Cross</div>
+                            <div className="text-[10px] md:text-xs font-medium">3000+ pts: Royal Gabi</div>
+                            <div className="text-[10px] md:text-xs font-medium">6000+ pts: Coffee Set</div>
                         </div>
                     </div>
                 )}
@@ -351,25 +605,63 @@ const GiftGame: React.FC = () => {
                             initial={{ scale: 0, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
                             exit={{ scale: 1.5, opacity: 0 }}
-                            onPointerDown={() => catchGift(gift.id)}
+                            onPointerDown={() => catchGift(gift.id, gift.x, gift.y, gift.type)}
                             className="absolute cursor-pointer select-none z-50 p-4 -m-4 md:p-6 md:-m-6"
                             style={{ left: gift.x, top: gift.y }}
                         >
-                            <div className="text-3xl md:text-6xl filter drop-shadow-2xl hover:scale-125 transition-transform active:scale-90">
-                                {gift.type === 'red' ? '🎁' : gift.type === 'gold' ? '⭐' : '🎄'}
+                            <div className={`text-3xl md:text-6xl filter drop-shadow-2xl hover:scale-125 transition-transform active:scale-90 ${gift.type === 'special' ? 'animate-spin' : ''}`}>
+                                {gift.type === 'red' ? '🎁' :
+                                    gift.type === 'gold' ? '⭐' :
+                                        gift.type === 'green' ? '🎄' :
+                                            gift.type === 'candle' ? '🕯️' :
+                                                gift.type === 'coffee' ? '☕' :
+                                                    gift.type === 'scarf' ? '🧣' :
+                                                        gift.type === 'cross' ? '✝️' :
+                                                            gift.type === 'crown' ? '👑' : '🌟'}
                             </div>
                         </motion.div>
                     ))}
                 </AnimatePresence>
 
+                {/* Particles */}
+                {particles.map(p => (
+                    <div
+                        key={p.id}
+                        className="absolute pointer-events-none text-xl md:text-2xl"
+                        style={{
+                            left: p.x,
+                            top: p.y,
+                            opacity: p.life / 30,
+                            transform: `scale(${p.life / 30})`
+                        }}
+                    >
+                        {p.emoji}
+                    </div>
+                ))}
+
+                {/* Floating Texts */}
+                {floatingTexts.map(t => (
+                    <div
+                        key={t.id}
+                        className="absolute pointer-events-none font-bold text-amber-600 text-xl md:text-3xl shadow-sm"
+                        style={{
+                            left: t.x,
+                            top: t.y,
+                            opacity: t.life / 20,
+                        }}
+                    >
+                        {t.text}
+                    </div>
+                ))}
+
                 {/* Decorative Background */}
                 <div className="absolute inset-0 pointer-events-none opacity-10">
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-5xl md:text-[20rem] font-serif font-bold text-stone-900">
+                    <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-5xl md:text-[20rem] font-serif font-bold ${levelInfo.theme.text}`}>
                         GENNA
                     </div>
                 </div>
-            </div>
-        </div>
+            </motion.div>
+        </div >
     );
 };
 
