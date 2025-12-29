@@ -42,6 +42,7 @@ const GiftGame: React.FC = () => {
     const [floatingTexts, setFloatingTexts] = useState<FloatingText[]>([]);
     const [shake, setShake] = useState(0);
     const [isPlaying, setIsPlaying] = useState(false);
+    const [isPaused, setIsPaused] = useState(false);
     const [timeLeft, setTimeLeft] = useState(30);
     const [currentLevel, setCurrentLevel] = useState(0);
     const [showLevelUp, setShowLevelUp] = useState(false);
@@ -182,11 +183,12 @@ const GiftGame: React.FC = () => {
         setParticles([]);
         setFloatingTexts([]);
         setIsPlaying(true);
+        setIsPaused(false);
         setTimeLeft(30);
     };
 
     useEffect(() => {
-        if (!isPlaying || showLevelUp) return;
+        if (!isPlaying || showLevelUp || isPaused) return;
 
         const spawnInterval = setInterval(() => {
             if (gameRef.current) {
@@ -237,10 +239,10 @@ const GiftGame: React.FC = () => {
             clearInterval(spawnInterval);
             clearInterval(timer);
         };
-    }, [isPlaying, showLevelUp]);
+    }, [isPlaying, showLevelUp, isPaused]);
 
     useEffect(() => {
-        if (!isPlaying || showLevelUp) return;
+        if (!isPlaying || showLevelUp || isPaused) return;
 
         const moveInterval = setInterval(() => {
             setGifts((prev) =>
@@ -277,7 +279,7 @@ const GiftGame: React.FC = () => {
         }, 16);
 
         return () => clearInterval(moveInterval);
-    }, [isPlaying, showLevelUp]);
+    }, [isPlaying, showLevelUp, isPaused]);
 
     const spawnParticles = (x: number, y: number, color: string) => {
         const newParticles: Particle[] = [];
@@ -377,6 +379,23 @@ const GiftGame: React.FC = () => {
                         <p className="text-[7px] md:text-[10px] uppercase tracking-widest font-bold text-stone-400 mb-0.5 md:mb-1">Time</p>
                         <p className="text-lg md:text-3xl font-serif font-bold text-red-800">{timeLeft}s</p>
                     </div>
+                    {isPlaying && (
+                        <button
+                            onClick={() => setIsPaused(!isPaused)}
+                            className="ml-2 w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full bg-stone-100 hover:bg-stone-200 text-stone-900 transition-all shadow-sm border border-stone-200 active:scale-95 z-50"
+                            title={isPaused ? "Resume" : "Pause"}
+                        >
+                            {isPaused ? (
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 md:w-6 md:h-6">
+                                    <path fillRule="evenodd" d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.348c1.295.712 1.295 2.573 0 3.285L7.28 19.991c-1.25.687-2.779-.217-2.779-1.643V5.653z" clipRule="evenodd" />
+                                </svg>
+                            ) : (
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 md:w-6 md:h-6">
+                                    <path fillRule="evenodd" d="M6.75 5.25a.75.75 0 01.75-.75H9a.75.75 0 01.75.75v13.5a.75.75 0 01-.75.75H7.5a.75.75 0 01-.75-.75V5.25zm7.5 0A.75.75 0 0115 4.5h1.5a.75.75 0 01.75.75v13.5a.75.75 0 01-.75.75H15a.75.75 0 01-.75-.75V5.25z" clipRule="evenodd" />
+                                </svg>
+                            )}
+                        </button>
+                    )}
                 </div>
 
                 {!isPlaying ? (
@@ -418,7 +437,7 @@ const GiftGame: React.FC = () => {
                 {/* Background Pattern */}
                 <div className={`absolute inset-0 pointer-events-none transition-opacity duration-1000 ${levelInfo.theme.pattern}`} />
                 {!isPlaying && timeLeft === 30 && (
-                    <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6 md:p-8">
+                    <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6 md:p-8 z-10">
                         <div className="text-5xl md:text-6xl mb-4 md:mb-6 animate-float">🎁</div>
                         <h2 className="text-2xl md:text-3xl font-serif font-bold text-stone-900 mb-2 md:mb-4">Genna Gift Catch</h2>
                         <p className="text-stone-600 max-w-sm mb-6 md:mb-8 font-medium text-xs md:text-base">
@@ -431,6 +450,25 @@ const GiftGame: React.FC = () => {
                             <div className="text-[10px] md:text-xs font-medium">3000+ pts: Royal Gabi</div>
                             <div className="text-[10px] md:text-xs font-medium">6000+ pts: Coffee Set</div>
                         </div>
+                    </div>
+                )}
+
+                {/* Pause Overlay */}
+                {isPaused && (
+                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-stone-900/40 backdrop-blur-sm z-50">
+                        <motion.div
+                            initial={{ scale: 0.9, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            className="glass-card p-8 rounded-3xl border-stone-200 shadow-xl text-center"
+                        >
+                            <h2 className="text-3xl font-serif font-bold text-stone-900 mb-4">Game Paused</h2>
+                            <button
+                                onClick={() => setIsPaused(false)}
+                                className="px-8 py-3 bg-stone-900 text-white rounded-xl font-bold hover:scale-105 transition-transform"
+                            >
+                                Resume
+                            </button>
+                        </motion.div>
                     </div>
                 )}
 
