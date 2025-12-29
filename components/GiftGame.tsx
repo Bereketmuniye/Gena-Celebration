@@ -33,7 +33,7 @@ interface FloatingText {
 
 const getTimeBonus = (score: number) => {
     // Scale time with performance but cap it to avoid infinite play
-    return Math.min(45, Math.floor(score / 100) + 10);
+    return Math.min(60, Math.floor(score / 100) + 15);
 };
 
 const GiftGame: React.FC = () => {
@@ -52,6 +52,7 @@ const GiftGame: React.FC = () => {
     const [isBoxOpen, setIsBoxOpen] = useState(false);
     const [hasClickedBox, setHasClickedBox] = useState(false);
     const [combo, setCombo] = useState(0);
+    const [maxCombo, setMaxCombo] = useState(0);
     const [activePowerUp, setActivePowerUp] = useState<PowerUpType>('none');
     const [powerUpTimeLeft, setPowerUpTimeLeft] = useState(0);
 
@@ -128,12 +129,12 @@ const GiftGame: React.FC = () => {
             icon: '☕',
             color: 'text-stone-800',
             theme: {
-                bg: 'bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-stone-300 via-stone-200 to-stone-100',
+                bg: 'bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-stone-200 via-stone-300 to-stone-400',
                 border: 'border-stone-600',
-                shadow: 'shadow-[0_0_50px_rgba(87,83,78,0.5)]',
+                shadow: 'shadow-[0_0_60px_rgba(87,83,78,0.6)]',
                 text: 'text-stone-900',
                 accent: 'text-stone-700',
-                pattern: 'opacity-10 bg-[url("data:image/svg+xml,%3Csvg width=\'20\' height=\'20\' viewBox=\'0 0 20 20\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M1 1h2v2H1V1zm4 0h2v2H5V1zm4 0h2v2H9V1z\' fill=\'%23292524\' fill-opacity=\'0.4\' fill-rule=\'evenodd\'/%3E%3C/svg%3E")]'
+                pattern: 'opacity-15 bg-[url("data:image/svg+xml,%3Csvg width=\'40\' height=\'40\' viewBox=\'0 0 40 40\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'%23292524\' fill-opacity=\'0.1\' fill-rule=\'evenodd\'%3E%3Cpath d=\'M0 40L40 0H20L0 20M40 40V20L20 40\'/%3E%3C/g%3E%3C/svg%3E")]'
             }
         };
         if (s >= 3000) return {
@@ -142,12 +143,12 @@ const GiftGame: React.FC = () => {
             icon: '🧣',
             color: 'text-emerald-700',
             theme: {
-                bg: 'bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-emerald-200 via-green-100 to-emerald-50',
-                border: 'border-emerald-400',
-                shadow: 'shadow-[0_0_50px_rgba(16,185,129,0.5)]',
+                bg: 'bg-[conic-gradient(at_bottom_left,_var(--tw-gradient-stops))] from-emerald-100 via-green-100 to-emerald-200',
+                border: 'border-emerald-500',
+                shadow: 'shadow-[0_0_60px_rgba(16,185,129,0.6)]',
                 text: 'text-emerald-900',
                 accent: 'text-emerald-600',
-                pattern: 'opacity-20 bg-[url("data:image/svg+xml,%3Csvg width=\'20\' height=\'20\' viewBox=\'0 0 20 20\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M0 0h20v20H0V0zm10 17l-7-7h14l-7 7z\' fill=\'%23059669\' fill-opacity=\'0.2\' fill-rule=\'evenodd\'/%3E%3C/svg%3E")]'
+                pattern: 'opacity-20 bg-[url("data:image/svg+xml,%3Csvg width=\'20\' height=\'20\' viewBox=\'0 0 20 20\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M1 1h2v2H1V1zm4 0h2v2H5V1zm4 0h2v2H9V1z\' fill=\'%23059669\' fill-opacity=\'0.2\' fill-rule=\'evenodd\'/%3E%3C/svg%3E")]'
             }
         };
         if (s >= 1000) return {
@@ -156,12 +157,12 @@ const GiftGame: React.FC = () => {
             icon: '✝️',
             color: 'text-red-800',
             theme: {
-                bg: 'bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-red-200 via-rose-100 to-red-50',
-                border: 'border-red-400',
-                shadow: 'shadow-[0_0_50px_rgba(239,68,68,0.5)]',
+                bg: 'bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-red-100 via-rose-100 to-red-200',
+                border: 'border-red-500',
+                shadow: 'shadow-[0_0_60px_rgba(239,68,68,0.6)]',
                 text: 'text-red-900',
                 accent: 'text-red-600',
-                pattern: 'opacity-15 bg-[url("data:image/svg+xml,%3Csvg width=\'40\' height=\'40\' viewBox=\'0 0 40 40\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'%23b91c1c\' fill-opacity=\'0.2\' fill-rule=\'evenodd\'%3E%3Cpath d=\'M0 40L40 0H20L0 20M40 40V20L20 40\'/%3E%3C/g%3E%3C/svg%3E")]'
+                pattern: 'opacity-15 bg-[url("data:image/svg+xml,%3Csvg width=\'52\' height=\'26\' viewBox=\'0 0 52 26\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23b91c1c\' fill-opacity=\'0.1\'%3E%3Cpath d=\'M10 10c0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6h2c0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4v2c-3.314 0-6-2.686-6-6 0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6zm25.464-1.95l8.486 8.486-1.414 1.414-8.486-8.486 1.414-1.414z\' /%3E%3C/g%3E%3C/g%3E%3C/svg%3E")]'
             }
         };
         if (s >= 300) return {
@@ -170,9 +171,9 @@ const GiftGame: React.FC = () => {
             icon: '🎗️',
             color: 'text-stone-600',
             theme: {
-                bg: 'bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-stone-200 via-gray-100 to-stone-50',
+                bg: 'bg-[conic-gradient(at_top_right,_var(--tw-gradient-stops))] from-stone-100 via-gray-100 to-stone-200',
                 border: 'border-stone-400',
-                shadow: 'shadow-[0_0_50px_rgba(168,162,158,0.5)]',
+                shadow: 'shadow-[0_0_60px_rgba(168,162,158,0.6)]',
                 text: 'text-stone-800',
                 accent: 'text-stone-500',
                 pattern: 'opacity-10 bg-[url("data:image/svg+xml,%3Csvg width=\'20\' height=\'20\' viewBox=\'0 0 20 20\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Ccircle cx=\'2\' cy=\'2\' r=\'2\' fill=\'%2357534e\' fill-opacity=\'0.2\'/%3E%3C/svg%3E")]'
@@ -184,12 +185,12 @@ const GiftGame: React.FC = () => {
             icon: '🕯️',
             color: 'text-stone-400',
             theme: {
-                bg: 'bg-stone-50/30',
-                border: 'border-white/50',
-                shadow: 'shadow-xl',
+                bg: 'bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-stone-50 via-white to-stone-100',
+                border: 'border-white/60',
+                shadow: 'shadow-2xl',
                 text: 'text-stone-900',
                 accent: 'text-amber-800',
-                pattern: ''
+                pattern: 'opacity-5 bg-[url("data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23000000\' fill-opacity=\'0.05\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")]'
             }
         };
     };
@@ -238,7 +239,9 @@ const GiftGame: React.FC = () => {
         setIsPlaying(true);
         setIsPaused(false);
         setTimeLeft(30);
+        setTimeLeft(30);
         setCombo(0);
+        setMaxCombo(0);
         setActivePowerUp('none');
         setPowerUpTimeLeft(0);
     };
@@ -260,15 +263,17 @@ const GiftGame: React.FC = () => {
                 let type: Gift['type'];
                 let speed: number;
 
+                const effectiveLevel = Math.min(currentLevel, 12); // Cap difficulty at level 12 to keep it playable
+
                 if (isPowerUp) {
                     type = Math.random() > 0.5 ? 'freeze' : 'frenzy';
-                    speed = Math.random() * 2 + 3;
+                    speed = Math.random() * 2 + 3 + (effectiveLevel * 0.2);
                 } else if (isObstacle) {
                     type = Math.random() > 0.5 ? 'rock' : 'coal';
-                    speed = Math.random() * 3 + 4 + (currentLevel * 0.5);
+                    speed = Math.random() * 3 + 4 + (effectiveLevel * 0.5);
                 } else if (isSpecial) {
                     type = 'special';
-                    speed = Math.random() * 3 + 4 + (currentLevel * 1.5); // Fast!
+                    speed = Math.random() * 3 + 4 + (effectiveLevel * 1.0); // Fast but capped
                 } else {
                     // Determine available gift types based on level
                     const availableTypes: Gift['type'][] = ['red', 'gold', 'green'];
@@ -276,7 +281,7 @@ const GiftGame: React.FC = () => {
                     if (currentLevel >= 2) availableTypes.push('coffee', 'cross');
                     if (currentLevel >= 3) availableTypes.push('crown');
                     type = availableTypes[Math.floor(Math.random() * availableTypes.length)];
-                    speed = Math.random() * 2 + 2 + (currentLevel * 2.5);
+                    speed = Math.random() * 2 + 2 + (effectiveLevel * 1.5); // Manageable speed increase
                 }
 
                 const newGift: Gift = {
@@ -436,7 +441,11 @@ const GiftGame: React.FC = () => {
             setShake(20);
             setTimeLeft(prev => Math.max(0, prev - 5));
         } else if (!isPowerUp) {
-            setCombo(prev => prev + 1);
+            setCombo(prev => {
+                const newCombo = prev + 1;
+                setMaxCombo(current => Math.max(current, newCombo));
+                return newCombo;
+            });
         }
 
         // Calculate final points with multiplier
@@ -602,6 +611,7 @@ const GiftGame: React.FC = () => {
                             <div className="text-[10px] md:text-xs font-medium">1000+ pts: Meskel Cross</div>
                             <div className="text-[10px] md:text-xs font-medium">3000+ pts: Royal Gabi</div>
                             <div className="text-[10px] md:text-xs font-medium">6000+ pts: Coffee Set</div>
+                            <div className="text-[10px] md:text-xs font-medium col-span-2 text-amber-600">10000+ pts: Legendary Artifacts</div>
                         </div>
                     </div>
                 )}
@@ -636,6 +646,7 @@ const GiftGame: React.FC = () => {
                             <div>
                                 <h2 className="text-xl md:text-4xl font-serif font-bold text-stone-900 mb-1 md:mb-2">Level {levelInfo.level} Reached!</h2>
                                 <p className="text-base md:text-xl text-amber-800 font-bold">Score: {score}</p>
+                                <p className="text-xs md:text-sm text-stone-500 font-bold">Max Combo: x{maxCombo}</p>
                             </div>
 
                             <div className="py-3 md:py-6 px-4 md:px-8 bg-amber-50 rounded-xl md:rounded-2xl border border-amber-200">
