@@ -54,21 +54,67 @@ const GiftGame: React.FC = () => {
     const nextTextId = useRef(0);
 
     const getLevelInfo = (s: number) => {
+        // Infinite Level Logic
+        if (s >= 10000) {
+            const extraScore = s - 10000;
+            const extraLevels = Math.floor(extraScore / 5000);
+            const currentLevel = 5 + extraLevels;
 
-        if (s >= 10000) return {
-            level: 5,
-            gift: 'Golden Crown of Lalibela',
-            icon: '👑',
-            color: 'text-amber-600',
-            theme: {
-                bg: 'bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-amber-200 via-yellow-100 to-amber-50',
-                border: 'border-amber-400',
-                shadow: 'shadow-[0_0_50px_rgba(245,158,11,0.5)]',
-                text: 'text-amber-900',
-                accent: 'text-amber-600',
-                pattern: 'opacity-20 bg-[url("data:image/svg+xml,%3Csvg width=\'20\' height=\'20\' viewBox=\'0 0 20 20\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'%23d97706\' fill-opacity=\'0.4\' fill-rule=\'evenodd\'%3E%3Ccircle cx=\'3\' cy=\'3\' r=\'3\'/%3E%3Ccircle cx=\'13\' cy=\'13\' r=\'3\'/%3E%3C/g%3E%3C/svg%3E")]'
-            }
-        };
+            // Cycle through themes for infinite levels
+            const themes = [
+                {
+                    gift: 'Diamond Crown of Kings',
+                    icon: '�',
+                    color: 'text-cyan-600',
+                    theme: {
+                        bg: 'bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-cyan-200 via-blue-100 to-cyan-50',
+                        border: 'border-cyan-400',
+                        shadow: 'shadow-[0_0_50px_rgba(8,145,178,0.5)]',
+                        text: 'text-cyan-900',
+                        accent: 'text-cyan-600',
+                        pattern: 'opacity-20 bg-[url("data:image/svg+xml,%3Csvg width=\'20\' height=\'20\' viewBox=\'0 0 20 20\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M10 0l2.5 7.5L20 10l-7.5 2.5L10 20l-2.5-7.5L0 10l7.5-2.5z\' fill=\'%230891b2\' fill-opacity=\'0.2\' fill-rule=\'evenodd\'/%3E%3C/svg%3E")]'
+                    }
+                },
+                {
+                    gift: 'Golden Scepter',
+                    icon: '🔱',
+                    color: 'text-yellow-600',
+                    theme: {
+                        bg: 'bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-yellow-200 via-amber-100 to-yellow-50',
+                        border: 'border-yellow-400',
+                        shadow: 'shadow-[0_0_50px_rgba(234,179,8,0.5)]',
+                        text: 'text-yellow-900',
+                        accent: 'text-yellow-600',
+                        pattern: 'opacity-20 bg-[url("data:image/svg+xml,%3Csvg width=\'20\' height=\'20\' viewBox=\'0 0 20 20\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Ccircle cx=\'10\' cy=\'10\' r=\'5\' fill=\'%23ca8a04\' fill-opacity=\'0.2\'/%3E%3C/svg%3E")]'
+                    }
+                },
+                {
+                    gift: 'Ancient Scroll',
+                    icon: '📜',
+                    color: 'text-purple-600',
+                    theme: {
+                        bg: 'bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-purple-200 via-fuchsia-100 to-purple-50',
+                        border: 'border-purple-400',
+                        shadow: 'shadow-[0_0_50px_rgba(147,51,234,0.5)]',
+                        text: 'text-purple-900',
+                        accent: 'text-purple-600',
+                        pattern: 'opacity-20 bg-[url("data:image/svg+xml,%3Csvg width=\'20\' height=\'20\' viewBox=\'0 0 20 20\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M0 0h20v20H0V0zm2 2h16v16H2V2z\' fill=\'%239333ea\' fill-opacity=\'0.1\' fill-rule=\'evenodd\'/%3E%3C/svg%3E")]'
+                    }
+                }
+            ];
+
+            const themeIndex = extraLevels % themes.length;
+            const theme = themes[themeIndex];
+
+            return {
+                level: currentLevel,
+                gift: theme.gift,
+                icon: theme.icon,
+                color: theme.color,
+                theme: theme.theme
+            };
+        }
+
         if (s >= 6000) return {
             level: 4,
             gift: 'Ceramic Coffee Set (Jebena)',
@@ -339,19 +385,21 @@ const GiftGame: React.FC = () => {
     };
 
     // Calculate progress to next level
-    const nextLevelScore =
-        score < 300 ? 300 :
-            score < 1000 ? 1000 :
-                score < 3000 ? 3000 :
-                    score < 6000 ? 6000 :
-                        score < 10000 ? 10000 : 10000;
+    let nextLevelScore = 10000;
+    let prevLevelScore = 6000;
 
-    const prevLevelScore =
-        score < 300 ? 0 :
-            score < 1000 ? 300 :
-                score < 3000 ? 1000 :
-                    score < 6000 ? 3000 :
-                        score < 10000 ? 6000 : 6000;
+    if (score < 300) { nextLevelScore = 300; prevLevelScore = 0; }
+    else if (score < 1000) { nextLevelScore = 1000; prevLevelScore = 300; }
+    else if (score < 3000) { nextLevelScore = 3000; prevLevelScore = 1000; }
+    else if (score < 6000) { nextLevelScore = 6000; prevLevelScore = 3000; }
+    else if (score < 10000) { nextLevelScore = 10000; prevLevelScore = 6000; }
+    else {
+        // Infinite levels logic: every 5000 points
+        const extraScore = score - 10000;
+        const currentInfiniteLevel = Math.floor(extraScore / 5000);
+        prevLevelScore = 10000 + (currentInfiniteLevel * 5000);
+        nextLevelScore = prevLevelScore + 5000;
+    }
 
     const progress = Math.min(100, Math.max(0, ((score - prevLevelScore) / (nextLevelScore - prevLevelScore)) * 100));
 
