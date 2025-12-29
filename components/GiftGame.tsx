@@ -328,8 +328,11 @@ const GiftGame: React.FC = () => {
     }, [isPlaying, showLevelUp, isPaused]);
 
     const spawnParticles = (x: number, y: number, color: string) => {
+        const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+        const count = isMobile ? 3 : 8;
+
         const newParticles: Particle[] = [];
-        for (let i = 0; i < 8; i++) {
+        for (let i = 0; i < count; i++) {
             newParticles.push({
                 id: nextParticleId.current++,
                 x,
@@ -616,7 +619,10 @@ const GiftGame: React.FC = () => {
                                         >
                                             {/* Confetti Explosion */}
                                             <div className="absolute inset-0 pointer-events-none">
-                                                {['🎉', '✨', '🎊', '🌸', '⭐', '🇪🇹'].map((emoji, i) => (
+                                                {(typeof window !== 'undefined' && window.innerWidth < 768
+                                                    ? ['🎉', '✨', '🎊']
+                                                    : ['🎉', '✨', '🎊', '🌸', '⭐', '🇪🇹']
+                                                ).map((emoji, i) => (
                                                     <motion.span
                                                         key={i}
                                                         initial={{ x: 0, y: 0, opacity: 1, scale: 0 }}
@@ -654,7 +660,10 @@ const GiftGame: React.FC = () => {
                                                 </div>
 
                                                 <div className="mt-6 md:mt-10 flex justify-center space-x-3 md:space-x-6">
-                                                    {['🎈', '🎊', '🙌', '✨'].map((e, i) => (
+                                                    {(typeof window !== 'undefined' && window.innerWidth < 768
+                                                        ? ['🎈', '✨']
+                                                        : ['🎈', '🎊', '🙌', '✨']
+                                                    ).map((e, i) => (
                                                         <motion.span
                                                             key={i}
                                                             animate={{ y: [0, -15, 0], scale: [1, 1.2, 1] }}

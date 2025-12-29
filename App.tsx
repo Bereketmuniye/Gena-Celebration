@@ -177,8 +177,8 @@ const App: React.FC = () => {
               <span className="text-white font-serif text-xl md:text-2xl font-bold">A</span>
             </div>
             <div>
-              <h1 className="text-lg md:text-xl font-serif font-bold text-stone-950 tracking-tight leading-none">Habesha</h1>
-              <p className="text-[8px] md:text-[10px] uppercase tracking-[0.3em] text-amber-700 font-bold">Charisma</p>
+              <h1 className="text-lg md:text-xl font-serif font-bold text-stone-950 tracking-tight leading-none">Ethiopian</h1>
+              <p className="text-[8px] md:text-[10px] uppercase tracking-[0.3em] text-amber-700 font-bold">Christmas</p>
             </div>
           </div>
 
@@ -247,7 +247,7 @@ const App: React.FC = () => {
       <footer className="relative z-10 py-8 md:py-12 text-center">
         <div className="w-16 md:w-24 h-px bg-stone-200 mx-auto mb-4 md:mb-6"></div>
         <p className="text-stone-400 text-[8px] md:text-[10px] uppercase tracking-[0.4em] font-bold px-4">
-          &copy; {new Date().getFullYear()} Habesha Charisma &bull; The Eternal Heart of Africa
+          &copy; {new Date().getFullYear()} Ethiopian Christmas &bull; The Eternal Heart of Africa
         </p>
       </footer>
 
