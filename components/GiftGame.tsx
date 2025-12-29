@@ -6,9 +6,11 @@ interface Gift {
     id: number;
     x: number;
     y: number;
-    type: 'red' | 'gold' | 'green' | 'candle' | 'coffee' | 'scarf' | 'cross' | 'crown' | 'special';
+    type: 'red' | 'gold' | 'green' | 'candle' | 'coffee' | 'scarf' | 'cross' | 'crown' | 'special' | 'rock' | 'coal' | 'freeze' | 'frenzy';
     speed: number;
 }
+
+type PowerUpType = 'none' | 'freeze' | 'frenzy';
 
 interface Particle {
     id: number;
@@ -46,8 +48,13 @@ const GiftGame: React.FC = () => {
     const [timeLeft, setTimeLeft] = useState(30);
     const [currentLevel, setCurrentLevel] = useState(0);
     const [showLevelUp, setShowLevelUp] = useState(false);
+
     const [isBoxOpen, setIsBoxOpen] = useState(false);
     const [hasClickedBox, setHasClickedBox] = useState(false);
+    const [combo, setCombo] = useState(0);
+    const [activePowerUp, setActivePowerUp] = useState<PowerUpType>('none');
+    const [powerUpTimeLeft, setPowerUpTimeLeft] = useState(0);
+
     const gameRef = useRef<HTMLDivElement>(null);
     const nextId = useRef(0);
     const nextParticleId = useRef(0);
@@ -231,6 +238,9 @@ const GiftGame: React.FC = () => {
         setIsPlaying(true);
         setIsPaused(false);
         setTimeLeft(30);
+        setCombo(0);
+        setActivePowerUp('none');
+        setPowerUpTimeLeft(0);
     };
 
     useEffect(() => {
@@ -242,11 +252,21 @@ const GiftGame: React.FC = () => {
 
                 // 5% chance to spawn a special time-bonus gift
                 const isSpecial = Math.random() < 0.05;
+                // 10% chance for obstacle
+                const isObstacle = Math.random() < 0.1;
+                // 2% chance for power-up
+                const isPowerUp = Math.random() < 0.02;
 
                 let type: Gift['type'];
                 let speed: number;
 
-                if (isSpecial) {
+                if (isPowerUp) {
+                    type = Math.random() > 0.5 ? 'freeze' : 'frenzy';
+                    speed = Math.random() * 2 + 3;
+                } else if (isObstacle) {
+                    type = Math.random() > 0.5 ? 'rock' : 'coal';
+                    speed = Math.random() * 3 + 4 + (currentLevel * 0.5);
+                } else if (isSpecial) {
                     type = 'special';
                     speed = Math.random() * 3 + 4 + (currentLevel * 1.5); // Fast!
                 } else {
@@ -268,7 +288,7 @@ const GiftGame: React.FC = () => {
                 };
                 setGifts((prev) => [...prev, newGift]);
             }
-        }, 800);
+        }, 800); // Spawn rate
 
         const timer = setInterval(() => {
             setTimeLeft((prev) => {
@@ -285,7 +305,24 @@ const GiftGame: React.FC = () => {
             clearInterval(spawnInterval);
             clearInterval(timer);
         };
-    }, [isPlaying, showLevelUp, isPaused]);
+    }, [isPlaying, showLevelUp, isPaused, currentLevel]);
+
+    // Power-up timer
+    useEffect(() => {
+        if (activePowerUp === 'none') return;
+
+        const timer = setInterval(() => {
+            setPowerUpTimeLeft(prev => {
+                if (prev <= 1) {
+                    setActivePowerUp('none');
+                    return 0;
+                }
+                return prev - 1;
+            });
+        }, 1000);
+
+        return () => clearInterval(timer);
+    }, [activePowerUp]);
 
     useEffect(() => {
         if (!isPlaying || showLevelUp || isPaused) return;
@@ -293,8 +330,20 @@ const GiftGame: React.FC = () => {
         const moveInterval = setInterval(() => {
             setGifts((prev) =>
                 prev
-                    .map((g) => ({ ...g, y: g.y + g.speed }))
-                    .filter((g) => g.y < 1000)
+                    .map((g) => ({
+                        ...g,
+                        y: g.y + (activePowerUp === 'freeze' ? g.speed * 0.5 : g.speed)
+                    }))
+                    .filter((g) => {
+                        if (g.y >= 1000) {
+                            // Reset combo on miss (only for good items)
+                            if (!['rock', 'coal', 'freeze', 'frenzy'].includes(g.type)) {
+                                setCombo(0);
+                            }
+                            return false;
+                        }
+                        return true;
+                    })
             );
 
             // Update particles
@@ -323,16 +372,15 @@ const GiftGame: React.FC = () => {
             setShake(prev => prev > 0 ? prev - 1 : 0);
 
         }, 16);
-
         return () => clearInterval(moveInterval);
     }, [isPlaying, showLevelUp, isPaused]);
 
     const spawnParticles = (x: number, y: number, color: string) => {
-        const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-        const count = isMobile ? 3 : 8;
+        // Completely disable particles on mobile to prevent screen clutter
+        if (typeof window !== 'undefined' && window.innerWidth < 768) return;
 
         const newParticles: Particle[] = [];
-        for (let i = 0; i < count; i++) {
+        for (let i = 0; i < 8; i++) {
             newParticles.push({
                 id: nextParticleId.current++,
                 x,
@@ -350,6 +398,7 @@ const GiftGame: React.FC = () => {
     const catchGift = (id: number, x: number, y: number, type: string) => {
         let points = 10;
         let color = '#ef4444';
+        let isBad = false;
 
         switch (type) {
             case 'crown': points = 100; color = '#fbbf24'; break; // Amber
@@ -360,12 +409,47 @@ const GiftGame: React.FC = () => {
             case 'candle': points = 20; color = '#f97316'; break; // Orange
             case 'gold': points = 15; color = '#eab308'; break; // Yellow
             case 'green': points = 10; color = '#22c55e'; break; // Green
+            case 'rock': points = -50; color = '#57534e'; isBad = true; break; // Stone
+            case 'coal': points = -20; color = '#1c1917'; isBad = true; break; // Black
+            case 'freeze': points = 0; color = '#3b82f6'; break; // Blue
+            case 'frenzy': points = 0; color = '#ef4444'; break; // Red
             default: points = 10; color = '#ef4444'; break; // Red
         }
 
         const isSpecial = type === 'special';
+        const isPowerUp = type === 'freeze' || type === 'frenzy';
 
-        setScore((prev) => prev + points);
+        // Handle Power-ups
+        if (type === 'freeze') {
+            setActivePowerUp('freeze');
+            setPowerUpTimeLeft(5);
+            setFloatingTexts(prev => [...prev, { id: nextTextId.current++, x, y, text: '❄️ FREEZE!', life: 60 }]);
+        } else if (type === 'frenzy') {
+            setActivePowerUp('frenzy');
+            setPowerUpTimeLeft(5);
+            setFloatingTexts(prev => [...prev, { id: nextTextId.current++, x, y, text: '🔥 FRENZY!', life: 60 }]);
+        }
+
+        // Handle Combo
+        if (isBad) {
+            setCombo(0);
+            setShake(20);
+            setTimeLeft(prev => Math.max(0, prev - 5));
+        } else if (!isPowerUp) {
+            setCombo(prev => prev + 1);
+        }
+
+        // Calculate final points with multiplier
+        if (!isPowerUp && !isBad) {
+            let multiplier = 1;
+            if (activePowerUp === 'frenzy') multiplier *= 2;
+            if (combo >= 10) multiplier *= 2;
+            else if (combo >= 5) multiplier *= 1.5;
+
+            points = Math.floor(points * multiplier);
+        }
+
+        setScore((prev) => Math.max(0, prev + points));
         setGifts((prev) => prev.filter((g) => g.id !== id));
 
         if (isSpecial) {
@@ -374,17 +458,19 @@ const GiftGame: React.FC = () => {
         }
 
         // Visual Juice
-        setShake(isSpecial ? 10 : 5);
+        setShake(isSpecial || isBad ? 10 : 5);
         spawnParticles(x, y, color);
 
         // Floating Text
-        setFloatingTexts(prev => [...prev, {
-            id: nextTextId.current++,
-            x,
-            y,
-            text: isSpecial ? `+${points} 🕒` : `+${points}`,
-            life: 40
-        }]);
+        if (!isPowerUp) {
+            setFloatingTexts(prev => [...prev, {
+                id: nextTextId.current++,
+                x,
+                y,
+                text: isSpecial ? `+${points} 🕒` : (points > 0 ? `+${points}` : `${points}`),
+                life: 40
+            }]);
+        }
     };
 
     // Calculate progress to next level
@@ -428,8 +514,24 @@ const GiftGame: React.FC = () => {
                     <div className="h-6 md:h-10 w-px bg-stone-200"></div>
                     <div className="text-center">
                         <p className="text-[7px] md:text-[10px] uppercase tracking-widest font-bold text-stone-400 mb-0.5 md:mb-1">Time</p>
-                        <p className="text-lg md:text-3xl font-serif font-bold text-red-800">{timeLeft}s</p>
+                        <p className={`text-lg md:text-3xl font-serif font-bold ${activePowerUp === 'freeze' ? 'text-blue-500 animate-pulse' : 'text-red-800'}`}>{timeLeft}s</p>
                     </div>
+
+                    {/* Combo Display */}
+                    {combo > 1 && (
+                        <div className="hidden md:block text-center animate-bounce">
+                            <p className="text-[7px] uppercase tracking-widest font-bold text-amber-500">Combo</p>
+                            <p className="text-xl font-black text-amber-600">x{combo}</p>
+                        </div>
+                    )}
+
+                    {/* Active Powerup Display */}
+                    {activePowerUp !== 'none' && (
+                        <div className="text-center animate-pulse">
+                            <p className="text-[7px] uppercase tracking-widest font-bold text-stone-400">{activePowerUp}</p>
+                            <p className="text-xl font-black">{activePowerUp === 'freeze' ? '❄️' : '🔥'} {powerUpTimeLeft}s</p>
+                        </div>
+                    )}
                     {isPlaying && (
                         <button
                             onClick={() => setIsPaused(!isPaused)}
@@ -617,12 +719,9 @@ const GiftGame: React.FC = () => {
                                             transition={{ type: 'spring', stiffness: 200, damping: 15 }}
                                             className="relative flex flex-col items-center justify-center"
                                         >
-                                            {/* Confetti Explosion */}
-                                            <div className="absolute inset-0 pointer-events-none">
-                                                {(typeof window !== 'undefined' && window.innerWidth < 768
-                                                    ? ['🎉', '✨', '🎊']
-                                                    : ['🎉', '✨', '🎊', '🌸', '⭐', '🇪🇹']
-                                                ).map((emoji, i) => (
+                                            {/* Confetti Explosion - HIDDEN ON MOBILE */}
+                                            <div className="absolute inset-0 pointer-events-none hidden md:block">
+                                                {['🎉', '✨', '🎊', '🌸', '⭐', '🇪🇹'].map((emoji, i) => (
                                                     <motion.span
                                                         key={i}
                                                         initial={{ x: 0, y: 0, opacity: 1, scale: 0 }}
@@ -634,7 +733,7 @@ const GiftGame: React.FC = () => {
                                                             rotate: Math.random() * 360
                                                         }}
                                                         transition={{ duration: 1.5, ease: "easeOut" }}
-                                                        className="absolute text-3xl md:text-5xl"
+                                                        className="absolute text-5xl"
                                                     >
                                                         {emoji}
                                                     </motion.span>
@@ -704,7 +803,7 @@ const GiftGame: React.FC = () => {
                             className="absolute cursor-pointer select-none z-50 p-4 -m-4 md:p-6 md:-m-6"
                             style={{ left: gift.x, top: gift.y }}
                         >
-                            <div className={`text-3xl md:text-6xl filter drop-shadow-2xl hover:scale-125 transition-transform active:scale-90 ${gift.type === 'special' ? 'animate-spin' : ''}`}>
+                            <div className={`text-3xl md:text-6xl filter drop-shadow-2xl hover:scale-125 transition-transform active:scale-90 ${gift.type === 'special' ? 'animate-spin' : ''} ${gift.type === 'rock' || gift.type === 'coal' ? 'grayscale' : ''}`}>
                                 {gift.type === 'red' ? '🎁' :
                                     gift.type === 'gold' ? '⭐' :
                                         gift.type === 'green' ? '🎄' :
@@ -712,7 +811,11 @@ const GiftGame: React.FC = () => {
                                                 gift.type === 'coffee' ? '☕' :
                                                     gift.type === 'scarf' ? '🧣' :
                                                         gift.type === 'cross' ? '✝️' :
-                                                            gift.type === 'crown' ? '👑' : '🌟'}
+                                                            gift.type === 'crown' ? '👑' :
+                                                                gift.type === 'rock' ? '🪨' :
+                                                                    gift.type === 'coal' ? '⚫' :
+                                                                        gift.type === 'freeze' ? '❄️' :
+                                                                            gift.type === 'frenzy' ? '🔥' : '🌟'}
                             </div>
                         </motion.div>
                     ))}
@@ -722,7 +825,7 @@ const GiftGame: React.FC = () => {
                 {particles.map(p => (
                     <div
                         key={p.id}
-                        className="absolute pointer-events-none text-xl md:text-2xl"
+                        className="absolute pointer-events-none text-sm md:text-2xl" // Smaller text on mobile
                         style={{
                             left: p.x,
                             top: p.y,
